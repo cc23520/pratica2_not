@@ -1,0 +1,40 @@
+CREATE PROCEDURE vendas.InserirVenda
+    @nomeCliente VARCHAR(50),
+    @sobrenomeCli VARCHAR(50),
+    @telefone VARCHAR(20),
+    @nascimento DATE,
+    @produtos TABLE (
+        idProduto INT,
+        quantidade INT
+    )
+AS
+BEGIN
+    DECLARE @idCliente INT;
+
+    
+    INSERT INTO vendas.Cliente (nomeCliente, sobrenomeCli, telefone, nascimento)
+    VALUES (@nomeCliente, @sobrenomeCli, @telefone, @nascimento);
+
+    SET @idCliente = SCOPE_IDENTITY();
+
+    
+    DECLARE @idCompra INT;
+    INSERT INTO vendas.Compra (idCliente, dataCompra)
+    VALUES (@idCliente, GETDATE());
+
+    SET @idCompra = SCOPE_IDENTITY();
+
+    INSERT INTO vendas.OrderItem (idCompra, idProduto, quantidade, subtotal)
+    SELECT @idCompra, p.idProduto, tp.quantidade, tp.quantidade * p.valorPro
+    FROM @produtos tp
+    JOIN vendas.Produto p ON tp.idProduto = p.idProduto;
+
+   
+    UPDATE vendas.Compra
+    SET TotalAmount = (
+            SELECT SUM(subtotal)
+            FROM vendas.OrderItem
+            WHERE idCompra = @idCompra
+        )
+    WHERE idCompra = @idCompra;
+END;

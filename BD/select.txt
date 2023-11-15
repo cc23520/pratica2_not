@@ -1,0 +1,16 @@
+SELECT
+    c.nomeCliente,
+    c.sobrenomeCli,
+    c.telefone,
+    c.nascimento,
+    p.nomeProduto,
+    oi.quantidade,
+    oi.subtotal,
+    co.dataCompra,
+    co.observacoes,
+    co.TotalAmount
+FROM
+    vendas.Cliente c
+JOIN vendas.Compra co ON c.idCliente = co.idCliente
+JOIN vendas.OrderItem oi ON co.idCompra = oi.idCompra
+JOIN vendas.Produto p ON oi.idProduto = p.idProduto;
