@@ -10,6 +10,7 @@ Este é um projeto de um sistema de gerenciamente de vendas de um restaurante
 
 # Como executar o projeto
 Requisitos: Node e MySQL baixados na maquina
+
 Para melhor experiência é recomendado abrir a página no chrome
 ```bash
 #clonar o repositório
