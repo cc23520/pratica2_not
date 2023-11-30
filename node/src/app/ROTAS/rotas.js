@@ -1,39 +1,58 @@
+// rotas.js
 const express = require('express');
 const path = require('path');
+const bodyParser = require('body-parser');
+const urlencodedParser = bodyParser.urlencoded({ extended: true });
 
-module.exports = (app)=>{
+const CartController = require('../BD/CartDAO');
+const cartController = new CartController();
 
-    app.use((req,res, next)=>{
+module.exports = (app, pool) => {
+    // Middleware para configurar o cabeçalho CORS
+    app.use((req, res, next) => {
         res.header("Access-Control-Allow-Origin", "*");
         next();
-    })
+    });
 
+   
+    app.post('/adicionarItem', (req, res) => {
+        if (!req.body) {
+            return res.status(400).json({
+                error: 'Dados ausentes'
+            });
+        }
+    
+        const { nome, descricao, preco, quantidade } = req.body;
+    
+        if (isNaN(preco) || isNaN(quantidade)) {
+            return res.status(400).json({
+                error: 'Valores de preço ou quantidade inválidos'
+            });
+        }
+    
+        cartController.adicionarItem(req, res); 
+    });
+
+  
     app.set('view engine', 'ejs');
     app.set('views', path.join(__dirname, '../../views'));
+
     app.use('/arquivos/home', express.static(path.join(__dirname, '../../../arquivos/home')));
-
-
-    app.get('/',(req,res)=>{ 
-        console.log("Acabou de usar a rota /home");
-        res.render("../../views/home")
-    })
-
-    app.set('view engine', 'ejs'); 
-    app.set('views', path.join(__dirname, '../../views'));
     app.use('/arquivos/login', express.static(path.join(__dirname, '../../../arquivos/login')));
-
-
-    app.get('/login',(req,res)=>{ 
-        console.log("Acabou de usar a rota /login");
-        res.render("../../views/login")
-    })
-
-    app.set('views', path.join(__dirname, '../../views'));
     app.use('/arquivos/compras', express.static(path.join(__dirname, '../../../arquivos/compras')));
 
+    app.get('/', (req, res) => {
+        console.log("Acabou de usar a rota /home");
+        res.render("../../views/home");
+    });
 
-    app.get('/compras',(req,res)=>{ 
+    app.get('/login', (req, res) => {
+        console.log("Acabou de usar a rota /login");
+        res.render("../../views/login");
+    });
+
+    app.get('/compras', (req, res) => {
         console.log("Acabou de usar a rota /compras");
-        res.render("../../views/compras")
-    })
-}
+        res.render("../../views/compras");
+    });
+};
