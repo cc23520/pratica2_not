@@ -6,10 +6,13 @@ const urlencodedParser = bodyParser.urlencoded({ extended: true });
 const app = express();
 app.use(bodyParser.json());
 
-
-const CartController = require('../BD/CartDAO');
-const { constants } = require('os');
+const CartController = require('../CONTROLLERS/CartController');
 const cartController = new CartController();
+
+
+
+const { constants } = require('os');
+
 
 module.exports = (app, pool) => {
     // Middleware para configurar o cabeçalho CORS
@@ -22,31 +25,28 @@ module.exports = (app, pool) => {
     app.post('/adicionarItem', (req, res) => {
         console.log('Corpo da requisição:', req.body);
         const { nome, preco, quantidade } = req.body || {};
-    
-        
+
         if (!req.body || typeof req.body !== 'object' || Object.keys(req.body).length === 0) {
             return res.status(400).json({
                 error: 'Dados ausentes ou formato inválido'
             });
         }
-    
-        
+
         if (!nome || typeof nome !== 'string' || nome.trim() === '') {
             return res.status(400).json({
                 error: 'Nome inválido'
             });
         }
-    
 
         if (isNaN(preco) || isNaN(quantidade)) {
             return res.status(400).json({
                 error: 'Valores de preço ou quantidade inválidos'
             });
         }
-    
-        
+
         cartController.adicionarItem(req, res);
     });
+
     
 
   

@@ -1,6 +1,4 @@
-const pool = require("../../config/database");
-
-const CartDAO = require("../BD/CartDAO");
+const CartDAO = require('../BD/CartDAO');
 
 class CartController {
     constructor() {
@@ -9,17 +7,17 @@ class CartController {
 
     async adicionarItem(req, res) {
         console.log('Recebendo solicitação para adicionar item:', req.body);
-    
-        const { nome, preco, quantidade } = req.body; 
-    
+
+        const { nome, preco, quantidade } = req.body || {};
+
         const item = {
             nome: String(nome),
-            preco: Number(preco), 
-            quantidade: Number(quantidade), 
+            preco: Number(preco),
+            quantidade: Number(quantidade),
         };
-    
+
         console.log('Item a ser adicionado:', item);
-    
+
         try {
             await this.cartDAO.adicionarItem(item);
             res.status(200).json({ message: 'Item adicionado ao carrinho com sucesso!' });
@@ -28,8 +26,6 @@ class CartController {
             res.status(500).json({ error: 'Erro ao adicionar item ao carrinho.' });
         }
     }
-
-
 }
 
 module.exports = CartController;
