@@ -1,4 +1,6 @@
-const CartDAO = require('..\BD\CartDAO');
+const pool = require("../../config/database");
+
+const CartDAO = require("../BD/CartDAO");
 
 class CartController {
     constructor() {
@@ -8,11 +10,10 @@ class CartController {
     async adicionarItem(req, res) {
         console.log('Recebendo solicitação para adicionar item:', req.body);
     
-        const { nome, descricao, preco, quantidade } = req.body; 
+        const { nome, preco, quantidade } = req.body; 
     
         const item = {
-            nome,
-            descricao,
+            nome: String(nome),
             preco: Number(preco), 
             quantidade: Number(quantidade), 
         };

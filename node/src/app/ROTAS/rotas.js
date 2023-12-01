@@ -3,8 +3,12 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extended: true });
+const app = express();
+app.use(bodyParser.json());
+
 
 const CartController = require('../BD/CartDAO');
+const { constants } = require('os');
 const cartController = new CartController();
 
 module.exports = (app, pool) => {
@@ -16,22 +20,34 @@ module.exports = (app, pool) => {
 
    
     app.post('/adicionarItem', (req, res) => {
-        if (!req.body) {
+        console.log('Corpo da requisição:', req.body);
+        const { nome, preco, quantidade } = req.body || {};
+    
+        
+        if (!req.body || typeof req.body !== 'object' || Object.keys(req.body).length === 0) {
             return res.status(400).json({
-                error: 'Dados ausentes'
+                error: 'Dados ausentes ou formato inválido'
             });
         }
     
-        const { nome, descricao, preco, quantidade } = req.body;
+        
+        if (!nome || typeof nome !== 'string' || nome.trim() === '') {
+            return res.status(400).json({
+                error: 'Nome inválido'
+            });
+        }
     
+
         if (isNaN(preco) || isNaN(quantidade)) {
             return res.status(400).json({
                 error: 'Valores de preço ou quantidade inválidos'
             });
         }
     
-        cartController.adicionarItem(req, res); 
+        
+        cartController.adicionarItem(req, res);
     });
+    
 
   
     app.set('view engine', 'ejs');

@@ -1,30 +1,23 @@
-const pool = require('../../config/database');
+const pool = require("../../config/database");
 
 class CartDAO {
-    async adicionarItem(req, res) {
-        console.log('Recebendo solicitação para adicionar item:', req.body);
+    constructor(databasePool) {
+        this.pool = databasePool;
+    }
 
-        const { nomeDoItem, descricao, preco, quantidade } = req.body;
-
-        const item = {
-            nomeDoItem,
-            descricao,
-            preco: Number(preco),
-            quantidade: Number(quantidade),
-        };
-
-        console.log('Item a ser adicionado:', item);
+    async adicionarItem(item) {
+        console.log('Recebendo solicitação para adicionar item:', item);
 
         try {
-            
+            await this.pool.query('INSERT INTO Carrinho (nome, preco, quantidade) VALUES (?, ?, ?)', [item.nome, item.preco, item.quantidade]);
 
-            await this.cartDAO.adicionarItem(item);
-            res.status(200).json({ message: 'Item adicionado ao carrinho com sucesso!' });
+            return { success: true, message: 'Item adicionado ao carrinho com sucesso!' };
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Erro ao adicionar item ao carrinho.' });
+            throw { success: false, error: 'Erro ao adicionar item ao carrinho.' };
         }
     }
 }
 
 module.exports = CartDAO;
+
