@@ -47,6 +47,31 @@ module.exports = (app, pool) => {
         cartController.adicionarItem(req, res);
     });
 
+    app.delete('/removerItem',(req, res) =>{
+        console.log('Corpo da requisição:',req.body)
+    
+        const { nome, preco, quantidade } = req.body || {};
+
+        if (!req.body || typeof req.body !== 'object' || Object.keys(req.body).length === 0) {
+            return res.status(400).json({
+                error: 'Dados ausentes ou formato inválido'
+            });
+        }
+
+        if (!nome || typeof nome !== 'string' || nome.trim() === '') {
+            return res.status(400).json({
+                error: 'Nome inválido'
+            });
+        }
+
+        if (isNaN(preco) || isNaN(quantidade)) {
+            return res.status(400).json({
+                error: 'Valores de preço ou quantidade inválidos'
+            });
+        }
+
+        cartController.adicionarItem(req, res);
+    });
     
 
   

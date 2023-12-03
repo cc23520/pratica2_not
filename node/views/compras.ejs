@@ -134,6 +134,43 @@
             }
         }
     </script>
+    <script>
+        async function removerItem(preco, quantityId, nome) {
+            const quantidade = parseInt(document.getElementById(quantityId).value);
+    
+            if (typeof nome !== "string") {
+                throw new Error("O nome do item deve ser uma string.");
+            }
+    
+            if (isNaN(quantidade) || quantidade <= 0) {
+                throw new Error("Quantidade inválida: " + quantidade);
+            }
+    
+            try {
+                const response = await fetch(`/removerItem/${nome}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+    
+                if (response.ok) {
+                    console.log('Item removido com sucesso!')
+    
+                    const totalElement = document.querySelector('#total-value')
+                    const currentTotal = parseFloat(totalElement.textContent)
+                    const itemTotal = parseFloat(preco) * quantidade;
+                    const newTotal = currentTotal - itemTotal;
+    
+                    totalElement.textContent = newTotal.toFixed(2)
+                } else{
+                    console.error('Erro ao remover item:', response.statusText)
+                }
+            } catch (error){
+                console.error('Erro ao remover item:', error.message);
+            }
+        }
+    </script>
 
 </body>
 </html>
