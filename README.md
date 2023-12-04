@@ -17,6 +17,8 @@ Para melhor experiência é recomendado abrir a página no chrome
 https://github.com/cc23520/pratica2_not.git
 #abrir a pasta do projeto
 cd NODE
-#executar o projeto no terminal
+#baixar nodemon para rodar o projeto
+npm i nodemon
+#executar o projeto
 npm start
 ```
