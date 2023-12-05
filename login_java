@@ -1,69 +1,68 @@
-import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
-public class TelaLoginJavaFX extends Application {
+public class TelaLoginJavaFX extends JFrame {
 
-    private TextField textFieldUsuario;
-    private PasswordField passwordFieldSenha;
+    private JTextField textFieldUsuario;
+    private JPasswordField passwordFieldSenha;
 
     public static void main(String[] args) {
-        launch(args);
+        SwingUtilities.invokeLater(() -> {
+            TelaLoginJavaFX telaLogin = new TelaLoginJavaFX();
+            telaLogin.setVisible(true);
+        });
     }
 
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Tela de Login");
+    public TelaLoginJavaFX() {
+        super("Tela de Login");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        
-        GridPane gridPane = new GridPane();
-        gridPane.setPadding(new Insets(10, 10, 10, 10));
-        gridPane.setVgap(8);
-        gridPane.setHgap(10);
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
 
-        Label labelUsuario = new Label("Usuário:");
-        GridPane.setConstraints(labelUsuario, 0, 0);
-        textFieldUsuario = new TextField();
-        GridPane.setConstraints(textFieldUsuario, 1, 0);
+        // Rótulo e campo de usuário
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(new JLabel("Usuário:"), gbc);
 
-        Label labelSenha = new Label("Senha:");
-        GridPane.setConstraints(labelSenha, 0, 1);
-        passwordFieldSenha = new PasswordField();
-        GridPane.setConstraints(passwordFieldSenha, 1, 1);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        textFieldUsuario = new JTextField(15);
+        panel.add(textFieldUsuario, gbc);
 
-        Button btnLogin = new Button("Login");
-        btnLogin.setOnAction(e -> realizarLogin());
-        GridPane.setConstraints(btnLogin, 1, 2);
+        // Rótulo e campo de senha
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(new JLabel("Senha:"), gbc);
 
-   
-        gridPane.getChildren().addAll(labelUsuario, textFieldUsuario, labelSenha, passwordFieldSenha, btnLogin);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        passwordFieldSenha = new JPasswordField(15);
+        panel.add(passwordFieldSenha, gbc);
 
-        Scene scene = new Scene(gridPane, 300, 150);
-        primaryStage.setScene(scene);
+        // Botão de login
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        JButton btnLogin = new JButton("Login");
+        btnLogin.addActionListener(e -> realizarLogin());
+        panel.add(btnLogin, gbc);
 
-        primaryStage.show();
+        // Adiciona o painel à janela
+        add(panel);
+        pack();
+        setLocationRelativeTo(null); // Centraliza a janela na tela
     }
 
     private void realizarLogin() {
         String usuario = textFieldUsuario.getText();
-        String senha = passwordFieldSenha.getText();
+        String senha = new String(passwordFieldSenha.getPassword());
 
- 
         if (usuario.equals("usuario") && senha.equals("senha")) {
-            exibirMensagem("Login bem-sucedido!");
+            JOptionPane.showMessageDialog(this, "Login bem-sucedido!");
         } else {
-            exibirMensagem("Usuário ou senha incorretos");
+            JOptionPane.showMessageDialog(this, "Usuário ou senha incorretos", "Erro de Login", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    private void exibirMensagem(String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Informação");
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
     }
 }
